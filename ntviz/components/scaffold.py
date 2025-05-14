@@ -38,14 +38,14 @@ class ChartScaffold(object):
         # general_instructions = """
         # You are a helpful and professional assistant with expertise in generating optimized code templates for data visualizations.
         
-        # # Code Scaffold Guidelines:
-        # ### 1. Constraints: 
-        # ### If the solution requires a single value (e.g. mean, max, min, median, first, last etc):
+        # Code Scaffold Guidelines:
+        # ## 1. Constraints: 
+        # ## If the solution requires a single value (e.g. mean, max, min, median, first, last etc):
         #  i) ALWAYS add a reference line (axvline or axhline) to the chart, 
         #  ii) ALWAYS with a legend containing the single value (formatted with 0.2F). 
          
-        # ### 2. DATA Handling:
-        # ### 2.1 Data field:
+        # ## 2. DATA Handling:
+        # ## 2.1 Data field:
         # - If using a <field> where 'semantic_type = date', YOU MUST APPLY the following transformation before using:
         #     i) Convert date fields to date types using:
         # ```python
@@ -59,10 +59,10 @@ class ChartScaffold(object):
         # data['<field>'] = data['<field>'].dt.strftime('%Y-%m-%d')  # Adjust as needed
         # ```
         
-        # ### 2.2 **Numerical Fields**:
+        # ## 2.2 **Numerical Fields**:
         # - Fill missing values with median (`data['<field>'].fillna(data['<field>'].median(), inplace=True)`).
         
-        # ### 3. Expected Output:
+        # ## 3. Expected Output:
         # i) ALWAYS make sure the x-axis, y-axis labels are legible (e.g., rotate x-axis when needed). 
         # ii) Solve the task carefully.
         # iii) ONLY modify the <imports> AND <stub> section when completing the task. 
@@ -71,29 +71,56 @@ class ChartScaffold(object):
         # """
         
         
+        # general_instructions = """
+        # You are a helpful and professional assistant with expertise in generating optimized code templates for data visualizations.
+        
+        # # Solve your task carfully with the following stages:
+        # 1. Preprocess the dataset:
+        # - Analyze the dataset summary to determine field types (`semantic_type`).
+        # - Apply necessary preprocessing  
+
+        # 2. Handle single-value insights properly:
+        # - If the visualization requires a single value (e.g., max, min, median, first, last):  
+        #     1. Always add a reference line (`axvline` or `axhline`).  
+        #     2. Always include a legend showing the formatted value (`0.2f`).     
+        
+        # 3. Generate the CODE TEMPLATE.
+        
+        # 4. Expected Output:
+        # i) ALWAYS make sure the x-axis, y-axis labels are legible (e.g., rotate x-axis when needed). 
+        # ii) Solve the task carefully.
+        # iii) Ensure that every plot using `legend()` has at least one labeled object (e.g., `label="Series A"` in `plot()`, `scatter()`, `bar()`).
+        # iv) ONLY call `plt.legend()` if there is at least one valid labeled element.
+        # v) ONLY modify the <imports> AND <stub> section when completing the task. 
+        # vi) Given the dataset summary, Ensure plot(data) method generates a {library} chart ({goal.visualization}) that directly addresses this goal: {goal.question}.
+        # vii) NEVER WRITE ANY CODE TO LOAD THE DATA. The data is already loaded and available.
+        # """
+        
+        
         general_instructions = """
         You are a helpful and professional assistant with expertise in generating optimized code templates for data visualizations.
-        1. **Analyze the dataset:**
-        - What are the column names and data types?
+        1. Preprocessing data:
         - Identify numerical vs categorical fields.
-        - Check for missing values.
+        - Analyze the dataset summary to determine field types (`semantic_type`).
+        - Apply necessary preprocessing  
+       
 
-        2. **Determine the visualization best practice approach:**
-        - If time-series → Line Chart.
-        - If category comparison → Bar Chart.
-        - If distribution → Histogram and the overlaid density estimates.
+        2. Handle single-value insights properly:
+        - If the visualization requires a single value (e.g., max, min, median, first, last):  
+             1. Always add a reference line (`axvline` or `axhline`).  
+             2. Always include a legend showing the formatted value (`0.2f`). 
 
-        3. **Generate the code accordingly.**
+        3. Generate the code template accordingly.
         
         4. Expected Output:
         i) ALWAYS make sure the x-axis, y-axis labels are legible (e.g., rotate x-axis when needed). 
         ii) Solve the task carefully.
         iii) ONLY modify the <imports> AND <stub> section when completing the task. 
         iv) Given the dataset summary, Ensure plot(data) method generates a {library} chart ({goal.visualization}) that directly addresses this goal: {goal.question}.
-        v) NEVER WRITE ANY CODE TO LOAD THE DATA. The data is already loaded and available."
+        v) NEVER WRITE ANY CODE TO LOAD THE DATA. The data is already loaded and available.
         """
         
-        matplotlib_instructions = f" {general_instructions} DO NOT include plt.show(). The plot method must return a matplotlib object (plt). Think step by step. \n"
+        matplotlib_instructions = f" {general_instructions} DO NOT include plt.show(). The plot method must return a matplotlib object (plt). Think step by step carefully. \n"
 
         if library == "matplotlib":
             instructions = {
@@ -107,7 +134,7 @@ import pandas as pd
 # plan -
 def plot(data: pd.DataFrame):
     <stub> # only modify this section
-    plt.title('{goal.question}', wrap=True)
+    plt.title("{goal.question}", wrap=True)
     return plt
 
 chart = plot(data) # data already contains the data to be plotted. Always include this line. No additional code beyond this line."""
@@ -127,7 +154,7 @@ import matplotlib.pyplot as plt
 def plot(data: pd.DataFrame):
 
     <stub> # only modify this section
-    plt.title('{goal.question}', wrap=True)
+    plt.title("{goal.question}", wrap=True)
     return plt
 
 chart = plot(data) # data already contains the data to be plotted. Always include this line. No additional code beyond this line."""

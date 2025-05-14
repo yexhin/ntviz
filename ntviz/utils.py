@@ -13,7 +13,7 @@ from diskcache import Cache
 import hashlib
 import io
 
-logger = logging.getLogger("lida")
+logger = logging.getLogger("ntviz")
 
 
 def get_dirs(path: str) -> List[str]:
@@ -225,3 +225,13 @@ def clean_code_snippet(code_string):
     # cleaned_snippet = re.sub(r'[\x00-\x1F]+', ' ', cleaned_snippet)
 
     return cleaned_snippet
+
+
+def get_project_root():
+    """Get the path to the project root.
+    
+    Returns:
+        str: The path to the project root.
+    """
+    import os
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))

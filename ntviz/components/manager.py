@@ -14,15 +14,15 @@ from llmx import llm, TextGenerator
 from ntviz.datamodel import Goal, Summary, TextGenerationConfig, Persona
 from ntviz.utils import read_dataframe
 from ..components.summarizer import Summarizer
-from ..components.goal import GoalExplorer
+from .goal import GoalExplorer
 from ..components.persona import PersonaExplorer
 from ..components.executor import ChartExecutor
-from ..components.viz import VizGenerator, VizEditor, VizExplainer, VizEvaluator, VizRepairer, VizRecommender
+from ..components.viz import VizGenerator, VizEditor, VizExplainer, VizEvaluator, VizRecommender
+from ..components.analysis import Analyzer
+import ntviz.web as ntviz
 
-import ntviz.web as lida
 
-
-logger = logging.getLogger("lida")
+logger = logging.getLogger("ntviz")
 
 
 class Manager(object):
@@ -43,8 +43,8 @@ class Manager(object):
         self.executor = ChartExecutor()
         self.explainer = VizExplainer()
         self.evaluator = VizEvaluator()
-        self.repairer = VizRepairer()
         self.recommender = VizRecommender()
+        self.analyzer = None
         self.data = None
         self.infographer = None
         self.persona = PersonaExplorer()
@@ -221,7 +221,7 @@ class Manager(object):
     ):
 
         if data is None:
-            root_file_path = os.path.dirname(os.path.abspath(lida.__file__))
+            root_file_path = os.path.dirname(os.path.abspath(ntviz.__file__))
             print(root_file_path)
             data = read_dataframe(
                 os.path.join(root_file_path, "files/data", summary.file_name)
@@ -279,35 +279,6 @@ class Manager(object):
         )
         return charts
 
-    def repair(
-        self,
-        code,
-        goal: Goal,
-        summary: Summary,
-        feedback,
-        textgen_config: TextGenerationConfig = TextGenerationConfig(),
-        library: str = "seaborn",
-        return_error: bool = False,
-    ):
-        """ Repair a visulization given some feedback"""
-        self.check_textgen(config=textgen_config)
-        code_specs = self.repairer.generate(
-            code=code,
-            feedback=feedback,
-            goal=goal,
-            summary=summary,
-            textgen_config=textgen_config,
-            text_gen=self.text_gen,
-            library=library,
-        )
-        charts = self.execute(
-            code_specs=code_specs,
-            data=self.data,
-            summary=summary,
-            library=library,
-            return_error=return_error,
-        )
-        return charts
 
     def explain(
         self,
@@ -335,6 +306,7 @@ class Manager(object):
     def evaluate(
         self,
         code,
+        image,
         goal: Goal,
         textgen_config: TextGenerationConfig = TextGenerationConfig(),
         library: str = "seaborn",
@@ -353,6 +325,7 @@ class Manager(object):
 
         return self.evaluator.generate(
             code=code,
+            image=image,
             goal=goal,
             textgen_config=textgen_config,
             text_gen=self.text_gen,
@@ -397,34 +370,77 @@ class Manager(object):
         )
         return charts
 
-    def infographics(self, visualization: str, n: int = 1,
-                     style_prompt: Union[str, List[str]] = "",
-                     return_pil: bool = False
-                     ):
-        """
-        Generate infographics using the peacasso package.
 
+    def analyze(
+            self,
+            chart,
+            df,
+            summary: Summary,
+            query: str = "Analyze this chart and provide insights",
+            textgen_config: TextGenerationConfig = TextGenerationConfig(),
+            context_k: int = 3,
+        ):
+            """
+            Analyze a chart using multimodal RAG.
+
+            Args:
+                chart: Chart to analyze, can be the result of execute()
+                summary (Summary, optional): Data summary. Defaults to None.
+                query (str, optional): User query for analysis focus. Defaults to "Analyze this chart and provide insights".
+                textgen_config (TextGenerationConfig, optional): Text generation config. Defaults to TextGenerationConfig().
+                context_k (int, optional): Number of context documents to retrieve. Defaults to 3.
+
+            Returns:
+                str: Analysis insights generated from the chart using RAG.
+            """
+            self.check_textgen(config=textgen_config)
+            
+            self.analyzer = Analyzer(text_gen=textgen_config)
+            
+            df = self.data
+            # Use the Analyzer component to analyze the chart
+            return self.analyzer.analyze(
+                chart=chart,
+                df=df,
+                summary=summary,
+                query=query,
+                textgen_config=textgen_config,
+                context_k=context_k
+            )
+        
+    def ingest_document(self, file_path: str):
+        """
+        Ingest a document into the RAG system for enhanced analysis context.
+        
         Args:
-            visualization (str): A visualization code
-            n (int, optional): The number of infographics to generate. Defaults to 1.
-            style_prompt (Union[str, List[str]], optional): A style prompt or list of style prompts. Defaults to "".
-
-        Raises:
-            ImportError: If the peacasso package is not installed.
+            file_path (str): Path to the document file (currently supports PDF)
+            
+        Returns:
+            None
         """
-
-        try:
-            import peacasso
-
-        except ImportError as exc:
-            raise ImportError(
-                'Please install lida with infographics support. pip install lida[infographics]. You will also need a GPU runtime.'
-            ) from exc
-
-        from ..components.infographer import Infographer
-
-        if self.infographer is None:
-            logger.info("Initializing Infographer")
-            self.infographer = Infographer()
-        return self.infographer.generate(
-            visualization=visualization, n=n, style_prompt=style_prompt, return_pil=return_pil)
+        self.analyzer.ingest_document(file_path)
+    
+    def update_knowledge_base(self, source_path: str = None):
+        """
+        Update the knowledge base used for RAG analysis.
+        
+        Args:
+            source_path (str, optional): Path to source directory with documents. Defaults to None.
+            
+        Returns:
+            None
+        """
+        self.analyzer.update_knowledge_base(source_path)
+        
+    def ingest_web_content(self, url: str, content: str):
+        """
+        Ingest web content into the RAG system for enhanced analysis context.
+        
+        Args:
+            url (str): URL of the web content
+            content (str): The web content text
+            
+        Returns:
+            None
+        """
+        self.analyzer.ingest_web_content(url, content)

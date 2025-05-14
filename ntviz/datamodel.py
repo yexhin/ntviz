@@ -148,19 +148,6 @@ class VisualizeEditWebRequest:
     )
 
 
-@dataclass
-class VisualizeRepairWebRequest:
-    """A Visualize Repair Web Request"""
-
-    feedback: Optional[Union[str, List[str], List[Dict]]]
-    code: str
-    goal: Goal
-    summary: Summary
-    library: str = "seaborn"
-    textgen_config: Optional[TextGenerationConfig] = field(
-        default_factory=TextGenerationConfig
-    )
-
 
 @dataclass
 class VisualizeExplainWebRequest:
@@ -223,12 +210,3 @@ class SummaryUrlRequest:
         default_factory=TextGenerationConfig
     )
 
-
-@dataclass
-class InfographicsRequest:
-    """A request for infographics generation"""
-
-    visualization: str
-    n: int = 1
-    style_prompt: Union[str, List[str]] = ""
-    # return_pil: bool = False
