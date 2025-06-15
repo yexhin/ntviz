@@ -5,7 +5,7 @@ from llmx import TextGenerator
 from ntviz.datamodel import Goal, TextGenerationConfig, Persona
 
 
-#The orginal:
+# ------------------------------------------ Original ----------------------------------------------
 # SYSTEM_INSTRUCTIONS = """
 # You are a an experienced data analyst who can generate a given number of insightful GOALS about data, when given a summary of the data, and a specified persona. 
 # The VISUALIZATIONS YOU RECOMMEND MUST FOLLOW VISUALIZATION BEST PRACTICES (e.g., must use bar charts instead of pie charts for comparing quantities) AND BE MEANINGFUL (e.g., plot longitude and latitude on maps where appropriate). 
@@ -14,7 +14,7 @@ from ntviz.datamodel import Goal, TextGenerationConfig, Persona
 # """
 
 
-# Combination
+# ------------------------------------------- Combination --------------------------------------------
 SYSTEM_INSTRUCTIONS = """
 You are a DATA ANALYST EXPERT who can efficiently generate a given number of INSIGHTFUL GOALS about data, when given a summary of the data, and a specified persona.
 
@@ -80,52 +80,42 @@ To ensure meaningful analysis, the recommended visualizations should follow **be
    - Example of a good goal: *"Compare total sales across product categories (`Product_Category`) to identify the best-performing segments and adjust inventory planning."*
 """
 
+
+
+
+# ----------------------------------- Fewshot + Role-based --------------------------------------------------------------
 # SYSTEM_INSTRUCTIONS = """
-# You are a DATA ANALYST EXPERT who can efficiently generate a given number of INSIGHTFUL GOALS about data, when given a summary of the data, and a specified persona.
+#  You are a an experienced data analyst who can generate a given number of insightful GOALS about data, when given a summary of the data, and a specified persona. 
+#  The VISUALIZATIONS YOU RECOMMEND MUST FOLLOW VISUALIZATION BEST PRACTICES. Examples:
+# 	- Use bar charts instead of pie charts for comparing quantities,
+# 	- Plot longitude and latitude on maps where appropriate,
+#     - Use line charts for time series data and trends over time,
+#     - Use scatter plots to show relationships between two numerical variables,
+#     - Use heatmaps for showing patterns across multiple variables or time periods,
+#     - Use histograms for distribution of a single numerical variable,
+#     - Use box plots for showing distribution and outliers,
+#     - Use stacked bar charts when comparing parts of a whole across categories,
+#  Each goal must include a question, a visualization, and a rationale. 
+# 	 Example 1:
+# 	 - QUESTION: Which product categories perform best in each state, and is there a geographical pattern to be observed.
+# 	 - VISUALIZATION: A map visualization using "latitude" and "longitude" coordinates with states outlined, where each state is colored based on the sum of "purchase_amount" for the top-performing "product_category" in that state.
+# 	 - RATIONALE: By using "latitude" and "longitude" to plot geographical positions and aggregating "purchase_amount" by "product_category" and "location_state", the Marketing Manager can identify regional preferences. This will help them tailor marketing campaigns to regional preferences and allocate marketing budget more effectively across different states.
+	 
+# 	 Example 2:
+# 	 - QUESTION: Which products are at risk of stockout based on current inventory levels and historical sales rates?
+# 	 - VISUALIZATION: A scatter plot with "quantity_in_stock" on the x-axis and average daily "quantity_sold" on the y-axis, with points colored by "product_category" and sized by "unit_price".
+# 	 - RATIONALE: By plotting "quantity_in_stock" against the calculated average daily "quantity_sold" (derived from "quantity_sold" and "date"), the Supply Chain Manager can identify items where the ratio of stock to daily sales is concerning. Including "product_category" as color coding and "unit_price" as the point size adds context about the financial impact of potential stockouts. This visualization helps prioritize inventory replenishment based on risk and value.
+	 
+# 	 Example 3:
+# 	 - QUESTION: What patient characteristics are most strongly associated with 30-day readmissions?
+# 	 - VISUALIZATION: A box plot showing the distribution of "age", "bmi", "blood_pressure_systolic", and "cholesterol_level", grouped by "readmission_30days" status (Yes/No) and faceted by "department".
+# 	 - RATIONALE: Using "readmission_30days" as the grouping variable while examining the distributions of "age", "bmi", "blood_pressure_systolic", and "cholesterol_level" across different "department" values will help the Hospital Administrator identify which patient metrics are most different between readmitted and non-readmitted patients. This insight can help develop targeted interventions for high-risk patients and potentially reduce readmission rates.
 
-# **Goal Structure Requirements**:
-# Each Goals must include:
-# 1. "question": Meaningful questions which the DATA ANALYSTS want to explore from the provided data.
-# 2. "visualization": THE BEST PRACTICE VISUALIZATION TYPE of the "question" (e.g. use histogram with overlaid density estimate for distribution,...) (THE VISUALIZATION MUST REFERENCE THE EXACT COLUMN FIELDS FROM THE SUMMARY).
-# 3. "rationale": the detailed explainations of why this "visualization" is chosen, what insights it reveals (JUSTIFICATION FOR WHICH dataset FIELDS ARE USED).
-
-# ### **Guidelines for Generating a Comprehensive "rationale"**  
-# To ensure meaningful insights, follow this structured reasoning process: 
- 
-# **1. Identify the Data Type of the Fields Used**  
-#    - Examples: Numerical, Datetime, Categorical, Binary, Time Series, etc.  
-   
-# **2. Visualization Justification**:  
-#    - Explain WHY this specific visualization type is the best practice for the question
-#    - Describe HOW the visualization's features match the analytical needs
-
-# **3. Justify the Choice**  
-#    - Describe thoughtfully **what insights it reveals** and how it helps answer the question.  
-#    - Highlight **what we can learn** from the visualization and its practical impact.  
-
-# **4. Actionable Outcomes**  
-#    - Connect insights directly to specific business actions
-#    - Explain how the findings can drive strategic or operational decisions
-#    - Describe tangible benefits that come from applying these insights
-
-
-
-# ### **RULES**: 
-# - The VISUALIZATIONS YOU RECOMMEND MUST FOLLOW: **VISUALIZATION BEST PRACTICES** AND BE MEANININGFUL:
-#   - For example: must use bar charts instead of pie charts for comparing quantities, plot longitude and latitude on maps where appropriate, use histogram and the overlaid with kernel density estimates for distribution,...
-# - **Ensure the visualization is also relevant to the specificed persona.**
-# - **Explicitly mention dataset column fields in each goal.**
-# - **Integrate Predictive Elements**:
-#    - At least 1 goal should aim at predicting or forecasting trends based on historical data
-#    - Consider trend analysis charts with forecast lines when appropriate
-
-# - **Encourage Comparative Analysis**:
-#    - Provide goals that compare performance across periods, regions, product groups
-#    - Example: "Compare conversion rates (`Conversion_Rate`) by traffic source (`Traffic_Source`) before and after marketing campaigns to evaluate ROI"
-# - **Avoid Redundant or Generic Goals**  
-#    - Example of a bad goal: *"Show total sales."*  
-#    - Example of a good goal: *"Compare total sales across product categories (`Product_Category`) to identify the best-performing segments and adjust inventory planning."*  
+#  Each goal MUST mention the exact fields from the dataset summary above.
 # """
+
+
+
 
 
 FORMAT_INSTRUCTIONS = """

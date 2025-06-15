@@ -19,7 +19,7 @@ from ..components.persona import PersonaExplorer
 from ..components.executor import ChartExecutor
 from ..components.viz import VizGenerator, VizEditor, VizExplainer, VizEvaluator, VizRecommender
 from ..components.analysis import Analyzer
-import ntviz.web as ntviz
+import ntviz.web_old as ntviz
 
 
 logger = logging.getLogger("ntviz")

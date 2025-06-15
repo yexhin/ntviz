@@ -1,0 +1,38 @@
+[[pages]]
+name = "Home"
+is_section = true
+icon = "🏠"
+
+[[pages]]
+path = "home.py"
+name = "Dashboard"
+icon = ""
+
+[[pages]]
+path = "API_key.py"
+name = "Instruction to get API KEY"
+icon = ""
+
+
+
+
+[[pages]]
+name = "Overview"
+is_section = true
+icon = "📑"
+
+[[pages]]
+path = "overview.py"
+name = "Data Report"
+icon = ""
+
+
+[[pages]]
+name = "NTViz's functions"
+is_section = true
+icon = "📊"
+
+[[pages]]
+path = "task.py"
+name = "NTViz Tasks"
+icon = ""

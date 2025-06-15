@@ -11,6 +11,7 @@ from langchain.chains import LLMChain
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings import CohereEmbeddings, HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
+from langchain_core.messages import HumanMessage
 from langchain.retrievers import MultiVectorRetriever
 from langchain.retrievers.document_compressors import LLMChainExtractor
 from langchain.schema import Document
@@ -39,7 +40,7 @@ class EmbeddingModel:
     """Factory class for embedding models"""
 
     @staticmethod
-    def create(provider: str = "openai", **kwargs) -> Any:
+    def create(provider: str = "gemini", **kwargs) -> Any:
         """Create an embedding model based on the provider
 
         Args:
@@ -107,11 +108,11 @@ class MultimodalRAGPipeline:
 
     def __init__(
         self,
-        embedding_provider: str = "openai",
+        embedding_provider: str = "gemini",
         embedding_kwargs: Dict = None,
         vector_db_provider: str = "faiss",
         vector_db_kwargs: Dict = None,
-        llm_provider: str = "openai",
+        provider: str = "gemini",
         llm_kwargs: Dict = None,
     ):
         """Initialize the multimodal RAG pipeline
@@ -128,12 +129,12 @@ class MultimodalRAGPipeline:
         self.embedding_kwargs = embedding_kwargs or {}
         self.vector_db_provider = vector_db_provider
         self.vector_db_kwargs = vector_db_kwargs or {}
-        self.llm_provider = llm_provider
+        self.provider = provider
         self.llm_kwargs = llm_kwargs or {}
 
         # Initialize embedding model
         self.embedding_model = EmbeddingModel.create(
-            provider=embedding_provider, **self.embedding_kwargs
+            embedding_providerprovider=embedding_provider, **self.embedding_kwargs
         )
 
         # Set up storage for raw content (images, text chunks, tables)
@@ -158,12 +159,12 @@ class MultimodalRAGPipeline:
         )
 
         # Initialize LLM
-        if llm_provider == "openai":
+        if provider == "openai":
             self.llm = ChatOpenAI(**self.llm_kwargs)
-        elif llm_provider == "gemini":
+        elif provider == "gemini":
             self.llm = ChatGoogleGenerativeAI(**self.llm_kwargs)
         else:
-            raise ValueError(f"Unsupported LLM provider: {llm_provider}")
+            raise ValueError(f"Unsupported LLM provider: {provider}")
 
         # Initialize text splitter for chunking documents
         self.text_splitter = RecursiveCharacterTextSplitter(
@@ -199,150 +200,205 @@ class MultimodalRAGPipeline:
         # For now, we return None
         return None
 
+    # def analyze_chart(
+    #     self, 
+    #     chart: ChartExecutorResponse, 
+    #     query: str = "Analyze this chart and provide insights", 
+    #     k: int = 3
+    # ) -> str:
+    #     """Analyze a chart using multimodal RAG
+
+    #     Args:
+    #         chart (ChartExecutorResponse): Chart to analyze
+    #         query (str, optional): User query. Defaults to "Analyze this chart and provide insights".
+    #         k (int, optional): Number of documents to retrieve. Defaults to 3.
+
+    #     Returns:
+    #         str: Analysis results
+    #     """
+    #     # Extract chart image
+    #     image_bytes = self._extract_chart_image(chart)
+    #     if not image_bytes:
+    #         return "Unable to extract chart image for analysis"
+
+    #     # Convert image to base64 for the multimodal LLM
+    #     image_b64 = self._image_to_base64(image_bytes)
+        
+    #     # Define prompt for chart analysis
+    #     chart_analysis_prompt = PromptTemplate(
+    #         template="""
+    #         You are a SENIOR DATA ANALYST with deep expertise in visual analytics and storytelling with data and chart. Your task is to interpret the following chart accurately and provide a concise yet comprehensive analysis report.
+
+    #         You are given:
+    #         1. Chart Code:
+    #         {chart_code}
+
+    #         2. Visualization (base64-encoded):
+    #         <image_base64>{image_b64}</image_base64>
+
+    #         3. User Query:
+    #         {query}
+
+    #         4. Retrieved Context (optional background information):
+    #         {context}
+
+    #         Based on the information above with the real data and chart, provide a structured analysis that includes:
+    #         1. Chart Description: 
+    #             - What does the chart show? Mention variables, labels, what the axes represent, and overall structure.
+                
+    #         2. Key Trends Identification:
+    #             - Are there any increasing or decreasing trends?
+    #             - Where are the highest and lowest points?
+    #             - Any anomalies or unexpected patterns?
+
+    #         3. Time-based Breakdown (if applicable):
+    #             - Which time periods show significant changes?
+    #             - Are there notable turning points? Link them to possible real-world events?
+                
+    #         4. Contextual Insights: (mention the specific values in the chart)
+    #             - Use actual data points shown in the chart.
+    #             - Explain what these values indicate and why they are important.
+    #             - What is the crucial information from the specific values in the chart? (taking the real values from the provided dataset to analyze the chart specificially)
+    #             - What meaningful insights can be derived by combining the chart with the provided context?
+    #             - What are the most surprising or critical insights the chart reveals?
+    #             - Is there any hidden insight from the chart? Does it reveal any important information?
+                
+                
+    #         5. External Influences: 
+    #             - Are there global or external factors that may have influenced the data or its trends?
+    #             - Explaining the potetial situations might affect the results.
+                
+    #         6. Recommendations: 
+    #             - Suggest practical and data-driven actions or decisions based on your analysis.
+    #             - Recommendations should be clear and useful even for a non-technical stakeholder.
+                
+    #         Conclusion:
+    #             - Summarize the report analysis for the user to read in bullet points.
+
+    #         **Note:**  Do not mention anything about inability to see or render the image.
+
+    #         Present your analysis for the non-specialists to understand in the clear format (e.g. write the analysis in bullet points,...)
+            
+    #         Analysis:
+    #         """,
+    #         input_variables=["chart_code", "image_b64", "query", "context"],
+    #     )
+        
+        
+    #     # Get relevant documents first (outside the chain)
+    #     relevant_docs = self.retriever.invoke(query)
+        
+    #     # Format the context as a string
+    #     context_str = "\n\n".join([doc.page_content for doc in relevant_docs])
+        
+    #     # Set up the RAG chain with pre-fetched context
+    #     rag_chain = (
+    #         {
+    #             "context": lambda _: context_str,
+    #             "chart_code": lambda _: chart.code,
+    #             "image_b64": lambda _: image_b64,
+    #             "query": lambda _: query,
+    #         }
+    #         | chart_analysis_prompt
+    #         | self.llm
+    #         | StrOutputParser()
+    #     )
+    #     # Execute the chain
+    #     return rag_chain.invoke({})
+    
+
     def analyze_chart(
         self, 
         chart: ChartExecutorResponse, 
         query: str = "Analyze this chart and provide insights", 
         k: int = 3
     ) -> str:
-        """Analyze a chart using multimodal RAG
+        """Analyze a chart using multimodal RAG for Gemini"""
 
-        Args:
-            chart (ChartExecutorResponse): Chart to analyze
-            query (str, optional): User query. Defaults to "Analyze this chart and provide insights".
-            k (int, optional): Number of documents to retrieve. Defaults to 3.
-
-        Returns:
-            str: Analysis results
-        """
         # Extract chart image
         image_bytes = self._extract_chart_image(chart)
         if not image_bytes:
             return "Unable to extract chart image for analysis"
 
-        # Convert image to base64 for the multimodal LLM
+        # Convert image to base64 MIME for Gemini
         image_b64 = self._image_to_base64(image_bytes)
-        
-        # Define prompt for chart analysis
-        chart_analysis_prompt = PromptTemplate(
-            template="""
-            You are a SENIOR DATA ANALYST with deep expertise in visual analyticsand storytelling with data. Your task is to interpret the following chart accurately and provide a concise yet comprehensive report.
+        image_mime = f"data:image/png;base64,{image_b64}"
 
-            You are given:
-            1. Chart Code:
-            {chart_code}
-
-            2. Visualization (base64-encoded):
-            <image_base64>{image_b64}</image_base64>
-
-            3. User Query:
-            {query}
-
-            4. Retrieved Context (optional background information):
-            {context}
-
-            Based on the information above, provide a structured analysis that includes:
-            1. Chart Description: 
-                - What does the chart show? Mention variables, labels, what the axes represent, and overall structure.
-                
-            2. Noticeable Patterns: 
-                - Describe noticeable patterns, trends, outliers, or anomalies in the chart.
-                - If the chart is a predictive elements, describing the trend line or the predictive metrics clearly.
-                - Mention any statistical tendencies (e.g., skewness, modality, concentration) visible in the chart.
-                
-            3. Contextual Insights: (mention the specific values in the chart)
-                - Use actual data points shown in the chart.
-                - Explain what these values indicate and why they are important.
-                - What is the crucial information from the specific values in the chart? (taking the real values from the provided dataset to analyze the chart specificially)
-                - What meaningful insights can be derived by combining the chart with the provided context?
-                - What are the most surprising or critical insights the chart reveals?
-                - Is there any hidden insight from the chart? Does it reveal any important information?
-                
-                
-            4. External Influences: 
-                - Are there global or external factors that may have influenced the data or its trends?
-                - Explaining the potetial situations might affect the results.
-                
-            5. Recommendations: 
-                - Suggest practical and data-driven actions or decisions based on your analysis.
-                - Recommendations should be clear and useful even for a non-technical stakeholder.
-                
-            6. Conclusion:
-                - Summarize the report analysis for the user to read.
-
-            **Note:**  Do not mention anything about inability to see or render the image.
-
-            Present your analysis for the non-specialists to understand in the clear format (e.g. write the analysis in bullet points,...)
-            
-            Analysis:
-            """,
-            input_variables=["chart_code", "image_b64", "query", "context"],
-        )
-        
-        # format in .json
-        format_instruction = """
-        THE OUTPUT MUST BE A CODE SNIPPET OF A VALID JSON LIST. IT MUST USE THE FOLLOWING FORMAT:
-
-            ```json
-                [
-                    {{
-                        "Chart Description": {{
-                            "Chart type": "...",
-                            "Variables": "...",
-                            "Overall Structure": "..."
-                        }}
-                    }},
-                    {{
-                        "Noticeable Patterns": {{
-                            "Pattern 1": "...",
-                            "Pattern 2": "..."
-                        }}
-                    }},
-                    {{
-                        "Contextual Insights": {{
-                            "Insight 1": "...",
-                            "Insight 2": "..."
-                        }}
-                    }},
-                    {{
-                        "External Influences": {{
-                            "Factor 1": "...",
-                            "Factor 2": "..."
-                        }}
-                    }},
-                    {{
-                        "Recommendations": {{
-                            "Recommendation 1": "...",
-                            "Recommendation 2": "..."
-                        }}
-                    }}
-                ]
-
-            THE OUTPUT SHOULD ONLY USE THE JSON FORMAT ABOVE.
-        """
-        
-
-      
-        # Get relevant documents first (outside the chain)
-        relevant_docs = self.retriever.get_relevant_documents(query)
-        
-        # Format the context as a string
+        # Get relevant documents for context
+        relevant_docs = self.retriever.invoke(query)
         context_str = "\n\n".join([doc.page_content for doc in relevant_docs])
-        
-        # Set up the RAG chain with pre-fetched context
-        rag_chain = (
+
+        # Build multimodal message for Gemini
+        human_message = HumanMessage(content=[
             {
-                "context": lambda _: context_str,
-                "chart_code": lambda _: chart.code,
-                "image_b64": lambda _: image_b64,
-                "query": lambda _: query,
+                "type": "image_url",
+                "image_url": {
+                    "url": image_mime
+                }
+            },
+            {
+                "type": "text",
+                "text": f"""
+                You are a SENIOR DATA ANALYST with deep expertise in visual analytics and storytelling with data and chart. Your task is to interpret the following chart accurately and provide a concise yet comprehensive analysis report.
+
+                You are given:
+                1. Chart Code:
+                {chart.code}
+
+                2. Visualization (base64-encoded):
+                <image_base64>{image_b64}</image_base64>
+
+                3. User Query:
+                {query}
+
+                4. Retrieved Context (optional background information):
+                {context_str}
+
+                Based on the information above with the real data and chart, provide a structured analysis that includes:
+                1. Chart Description: 
+                    - What does the chart show? Mention variables, labels, what the axes represent, and overall structure.
+                    
+                2. Key Trends Identification:
+                    - Are there any increasing or decreasing trends?
+                    - Where are the highest and lowest points?
+                    - Any anomalies or unexpected patterns?
+
+                3. Time-based Breakdown (if applicable):
+                    - Which time periods show significant changes?
+                    - Are there notable turning points? Link them to possible real-world events?
+                    
+                4. Contextual Insights: (mention the specific values in the chart)
+                    - Use actual data points shown in the chart.
+                    - Explain what these values indicate and why they are important.
+                    - What is the crucial information from the specific values in the chart? (taking the real values from the provided dataset to analyze the chart specificially)
+                    - What meaningful insights can be derived by combining the chart with the provided context?
+                    - What are the most surprising or critical insights the chart reveals?
+                    - Is there any hidden insight from the chart? Does it reveal any important information?
+                    
+                    
+                5. External Influences: 
+                    - Are there global or external factors that may have influenced the data or its trends?
+                    - Explaining the potetial situations might affect the results.
+                    
+                6. Recommendations: 
+                    - Suggest practical and data-driven actions or decisions based on your analysis.
+                    - Recommendations should be clear and useful even for a non-technical stakeholder.
+                    
+                Conclusion:
+                    - Summarize the report analysis for the user to read in bullet points.
+
+                **Note:**  Do not mention anything about inability to see or render the image.
+
+                Present your analysis for the non-specialists to understand in the clear format (e.g. write the analysis in bullet points,...)
+                """
             }
-            | chart_analysis_prompt
-            | self.llm
-            | StrOutputParser()
-        )
-        # Execute the chain
-        return rag_chain.invoke({})
+        ])
+
+        
+        return self.llm.invoke([human_message]).content
+
+    
+    
 
     def ingest_pdf(self, file_path: str) -> None:
         """Ingest a PDF document into the RAG system
@@ -401,7 +457,7 @@ class MultimodalRAGPipeline:
         """Ingest a LIDA summary into the RAG system
 
         Args:
-            summary (Summary): LIDA summary object
+            summary (Summary): NTViz summary object
         """
         
         # Summary is dict so we can not use the object type
@@ -498,19 +554,19 @@ class Analyzer:
         
         
         # Determine provider
-        llm_provider = "gemini"
+        provider = "gemini"
         
         # Default configuration based on provider
-        if llm_provider == "openai":
+        if provider == "openai":
             default_config = {
                 "embedding_provider": "openai",
                 "embedding_kwargs": {"model": "text-embedding-3-small"},
                 "vector_db_provider": "faiss",
                 "vector_db_kwargs": {},
-                "llm_provider": "openai",
+                "provider": "openai",
                 "llm_kwargs": {"model_name": "gpt-4o", "temperature": 0.2},
             }
-        elif llm_provider == "gemini":
+        elif provider == "gemini":
             default_config = {
                 "embedding_provider": "gemini",
                 "embedding_kwargs": {
@@ -518,7 +574,7 @@ class Analyzer:
                 },
                 "vector_db_provider": "faiss",
                 "vector_db_kwargs": {},
-                "llm_provider": "gemini",
+                "provider": "gemini",
                 "llm_kwargs": {"model": "gemini-1.5-flash", "temperature": 0.2},
             }
     

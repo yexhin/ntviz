@@ -4,6 +4,7 @@ import io
 import json
 from ...utils import clean_code_snippet
 from llmx import TextGenerator, TextGenerationConfig, TextGenerationResponse
+from langchain_core.messages import HumanMessage
 
 from ntviz.datamodel import Goal
 
@@ -194,3 +195,5 @@ class VizEvaluator(object):
             except Exception as json_error:
                 print("Error parsing evaluation data", completion, str(json_error))
         return evaluations
+
+
