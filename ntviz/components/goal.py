@@ -83,6 +83,7 @@ To ensure meaningful analysis, the recommended visualizations should follow **be
 
 
 
+
 # ----------------------------------- Fewshot + Role-based --------------------------------------------------------------
 # SYSTEM_INSTRUCTIONS = """
 #  You are a an experienced data analyst who can generate a given number of insightful GOALS about data, when given a summary of the data, and a specified persona. 

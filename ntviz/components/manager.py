@@ -44,7 +44,7 @@ class Manager(object):
         self.explainer = VizExplainer()
         self.evaluator = VizEvaluator()
         self.recommender = VizRecommender()
-        self.analyzer = None
+        self.analyzer = Analyzer()
         self.data = None
         self.infographer = None
         self.persona = PersonaExplorer()
@@ -408,7 +408,7 @@ class Manager(object):
                 context_k=context_k
             )
         
-    def ingest_document(self, file_path: str):
+    def ingest_document(self, file_path: str, textgen_config):
         """
         Ingest a document into the RAG system for enhanced analysis context.
         

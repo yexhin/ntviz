@@ -1,13 +1,15 @@
 [[pages]]
+path = "task.py"
+name = "NTViz Tasks"
+
+[[pages]]
 path = "home.py"
-name = "Dashboard"
+name = "About Us"
 
 [[pages]]
 path = "API_key.py"
 name = "API KEY"
 
 
-[[pages]]
-path = "task.py"
-name = "NTViz Tasks"
+
 

@@ -1,18 +1,12 @@
 [[pages]]
-name = "Home"
+name = "NTViz's functions"
 is_section = true
-icon = "🏠"
+icon = "📊"
 
 [[pages]]
-path = "home.py"
-name = "Dashboard"
+path = "task.py"
+name = "NTViz Tasks"
 icon = ""
-
-[[pages]]
-path = "API_key.py"
-name = "Instruction to get API KEY"
-icon = ""
-
 
 
 
@@ -26,13 +20,24 @@ path = "overview.py"
 name = "Data Report"
 icon = ""
 
-
 [[pages]]
-name = "NTViz's functions"
+name = "Knowledge Base"
 is_section = true
-icon = "📊"
+icon = "📍"
 
 [[pages]]
-path = "task.py"
-name = "NTViz Tasks"
+path = "home.py"
+name = "About Us"
 icon = ""
+
+[[pages]]
+path = "API_key.py"
+name = "Instruction to get API KEY"
+icon = ""
+
+
+
+
+
+
+

@@ -3,6 +3,7 @@ import pandas as pd
 from dotenv import load_dotenv
 import time
 import os
+import re
 
 # Import NTViz library
 import sys
@@ -207,7 +208,34 @@ def generate_visualizations(ntviz, summary, goals, df, textgen_config):
         chart = item["chart"]
 
         st.subheader(f"✷ :grey[Insight {i+1}:]")
+        
+            
+        # exlanation of the method
+        # (?:3\.\s*)?           # Optionally matches "3." followed by whitespace (if present)
+        # \*{0,2}Justification:\*{0,2}   # Matches "Justification:", possibly surrounded by 0–2 asterisks (Markdown formatting)
+        # \s*                   # Matches any whitespace following that
+        # (.*?)                 # Group 1: Content of the Justification section (non-greedy)
+        # \s*                   # Matches whitespace before the next section
+
+        # (?:4\.\s*)?           # Optionally matches "4." followed by whitespace
+        # \*{0,2}Actionable Outcomes:\*{0,2}  # Matches the next section title, possibly surrounded by asterisks
+        # \s*                   # Matches whitespace following that
+        # (.*)                  # Group 2: Content of the Actionable Outcomes section
+
+        match = re.search(
+        r"(?:3\.\s*)?\*{0,2}Justification:\*{0,2}\s*(.*?)\s*(?:4\.\s*)?\*{0,2}Actionable Outcomes:\*{0,2}\s*(.*)",
+        goal.rationale,
+        flags=re.DOTALL
+        )
+        
+        
+        if match:
+            part3 = match.group(1).strip()
+            part4 = match.group(2).strip()
+            goal.rationale = f"{part3}. {part4}"
+
         st.write(goal)
+
 
         display_charts(
             ntviz,
@@ -328,7 +356,7 @@ def process_viz_recommend(df, ntviz, textgen_config):
                 
                 charts = ntviz.visualize(summary=summary, 
                                         goal=goals[0], 
-                                        library="seaborn")
+                                        library="matplotlib")
                 
                 if charts:
                     recommended_charts = ntviz.recommend(
@@ -382,7 +410,7 @@ def show_task():
         st.header("Tasks:")
         task = st.selectbox("Functions:", ["VizRecommend", 
                                            "UserQuery based graphs",
-                                           "ExtraViz"                                           ])
+                                           "VizExtra"                                           ])
 
     # Task-specific content
     df = upload_file()
@@ -396,7 +424,7 @@ def show_task():
             df = clean_df(df)
             process_user_query_graphs(df, ntviz, textgen_config, provider)
         
-        elif task == "ExtraViz" and ntviz:
+        elif task == "VizExtra" and ntviz:
             df = clean_df(df)
             process_viz_recommend(df, ntviz, textgen_config)
   

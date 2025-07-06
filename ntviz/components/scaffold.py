@@ -32,69 +32,6 @@ class ChartScaffold(object):
         # Solve the task  carefully by completing ONLY the <imports> AND <stub> section. 
         # Given the dataset summary, the plot(data) method should generate a {library} chart ({goal.visualization}) that addresses this goal: {goal.question}. DO NOT WRITE ANY CODE TO LOAD THE DATA. The data is already loaded and available in the variable data.
         # """
-
-    
-        
-        # general_instructions = """
-        # You are a helpful and professional assistant with expertise in generating optimized code templates for data visualizations.
-        
-        # Code Scaffold Guidelines:
-        # ## 1. Constraints: 
-        # ## If the solution requires a single value (e.g. mean, max, min, median, first, last etc):
-        #  i) ALWAYS add a reference line (axvline or axhline) to the chart, 
-        #  ii) ALWAYS with a legend containing the single value (formatted with 0.2F). 
-         
-        # ## 2. DATA Handling:
-        # ## 2.1 Data field:
-        # - If using a <field> where 'semantic_type = date', YOU MUST APPLY the following transformation before using:
-        #     i) Convert date fields to date types using:
-        # ```python
-        #  data['field'] = pd.to_datetime(data['<field>'], errors='coerce')
-        # ```    
-        
-        #     ii) Drop the rows with NaT values data = data[pd.notna(data[<field>])] 
-            
-        #     iii) Ensure the field is formatted correctly for plotting:
-        # ```python
-        # data['<field>'] = data['<field>'].dt.strftime('%Y-%m-%d')  # Adjust as needed
-        # ```
-        
-        # ## 2.2 **Numerical Fields**:
-        # - Fill missing values with median (`data['<field>'].fillna(data['<field>'].median(), inplace=True)`).
-        
-        # ## 3. Expected Output:
-        # i) ALWAYS make sure the x-axis, y-axis labels are legible (e.g., rotate x-axis when needed). 
-        # ii) Solve the task carefully.
-        # iii) ONLY modify the <imports> AND <stub> section when completing the task. 
-        # iv) Given the dataset summary, Ensure plot(data) method generates a {library} chart ({goal.visualization}) that directly addresses this goal: {goal.question}.
-        # v) NEVER WRITE ANY CODE TO LOAD THE DATA. The data is already loaded and available."
-        # """
-        
-        
-        # general_instructions = """
-        # You are a helpful and professional assistant with expertise in generating optimized code templates for data visualizations.
-        
-        # # Solve your task carfully with the following stages:
-        # 1. Preprocess the dataset:
-        # - Analyze the dataset summary to determine field types (`semantic_type`).
-        # - Apply necessary preprocessing  
-
-        # 2. Handle single-value insights properly:
-        # - If the visualization requires a single value (e.g., max, min, median, first, last):  
-        #     1. Always add a reference line (`axvline` or `axhline`).  
-        #     2. Always include a legend showing the formatted value (`0.2f`).     
-        
-        # 3. Generate the CODE TEMPLATE.
-        
-        # 4. Expected Output:
-        # i) ALWAYS make sure the x-axis, y-axis labels are legible (e.g., rotate x-axis when needed). 
-        # ii) Solve the task carefully.
-        # iii) Ensure that every plot using `legend()` has at least one labeled object (e.g., `label="Series A"` in `plot()`, `scatter()`, `bar()`).
-        # iv) ONLY call `plt.legend()` if there is at least one valid labeled element.
-        # v) ONLY modify the <imports> AND <stub> section when completing the task. 
-        # vi) Given the dataset summary, Ensure plot(data) method generates a {library} chart ({goal.visualization}) that directly addresses this goal: {goal.question}.
-        # vii) NEVER WRITE ANY CODE TO LOAD THE DATA. The data is already loaded and available.
-        # """
         
         
         general_instructions = """

@@ -31,6 +31,9 @@ def main():
     )
     # Decor
     st.logo(image="./web/material/outlook/logo.jpg", size="large",icon_image=None)
+    
+
+    
     pg = st.navigation(nav)
 
     add_page_title(pg)

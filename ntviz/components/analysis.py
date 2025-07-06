@@ -40,7 +40,7 @@ class EmbeddingModel:
     """Factory class for embedding models"""
 
     @staticmethod
-    def create(provider: str = "gemini", **kwargs) -> Any:
+    def create(embedding_provider: str = "gemini", **kwargs) -> Any:
         """Create an embedding model based on the provider
 
         Args:
@@ -50,16 +50,16 @@ class EmbeddingModel:
         Returns:
             Any: Embedding model instance
         """
-        if provider == "openai":
+        if embedding_provider == "openai":
             return OpenAIEmbeddings(**kwargs)
-        elif provider == "cohere":
+        elif embedding_provider == "cohere":
             return CohereEmbeddings(**kwargs)
-        elif provider == "huggingface":
+        elif embedding_provider == "huggingface":
             return HuggingFaceEmbeddings(**kwargs)
-        elif provider == "gemini":
+        elif embedding_provider == "gemini":
             return GoogleGenerativeAIEmbeddings(**kwargs)
         else:
-            raise ValueError(f"Unsupported embedding model provider: {provider}")
+            raise ValueError(f"Unsupported embedding model provider: {embedding_provider}")
 
 
 class VectorDatabase:
@@ -67,7 +67,7 @@ class VectorDatabase:
 
     @staticmethod
     def create(
-        embedding_model, provider: str = "faiss", persist_dir: str = None, **kwargs
+        embedding_model, vector_db_provider: str = "faiss", persist_dir: str = None, **kwargs
     ) -> VectorStore:
         """Create a vector database based on the provider
 
@@ -80,27 +80,22 @@ class VectorDatabase:
         Returns:
             VectorStore: Vector store instance
         """
-        # if provider == "faiss":
-        #     if persist_dir and os.path.exists(os.path.join(persist_dir, "index.faiss")):
-        #         return FAISS.load_local(persist_dir, embedding_model)
-        #     return FAISS.from_documents([], embedding_model)
-        # elif provider == "milvus":
-        #     return Milvus(embedding_function=embedding_model, **kwargs)
-        # else:
-        #     raise ValueError(f"Unsupported vector database provider: {provider}")
         
-        if provider == "faiss":
-            if persist_dir and os.path.exists(os.path.join(persist_dir, "index.faiss")):
-                return FAISS.load_local(persist_dir, embedding_model)
-            else:
-                dummy_doc = Document(page_content="This is a placeholder document for initializing FAISS.")
-                return FAISS.from_documents([dummy_doc], embedding_model)
-        
-        elif provider == "milvus":
+        # if vector_db_provider == "faiss":
+        #     if vector_db_provider == "faiss":
+        #         dummy_doc = Document(page_content="This is a placeholder document for initializing FAISS.")
+        #         return FAISS.from_documents([dummy_doc], embedding_model)
+        #     else:
+        #         dummy_doc = Document(page_content="This is a placeholder document for initializing FAISS.")
+        #         return FAISS.from_documents([dummy_doc], embedding_model)
+        if vector_db_provider == "faiss":
+            dummy_doc = Document(page_content="This is a placeholder document for initializing FAISS.")
+            return FAISS.from_documents([dummy_doc], embedding_model) 
+        elif vector_db_provider == "milvus":
             return Milvus(embedding_function=embedding_model, **kwargs)
         
         else:
-            raise ValueError(f"Unsupported vector DB provider: {provider}")
+            raise ValueError(f"Unsupported vector DB provider: {vector_db_provider}")
 
 
 class MultimodalRAGPipeline:
@@ -134,20 +129,20 @@ class MultimodalRAGPipeline:
 
         # Initialize embedding model
         self.embedding_model = EmbeddingModel.create(
-            embedding_providerprovider=embedding_provider, **self.embedding_kwargs
+            embedding_provider=embedding_provider, **self.embedding_kwargs
         )
 
         # Set up storage for raw content (images, text chunks, tables)
         self.byte_store = InMemoryStore()  # Can be replaced with Redis, Filesystem, etc.
 
         # Initialize vector database for storing embeddings
-        persist_dir = os.path.join(get_project_root(), "vectorstore")
-        os.makedirs(persist_dir, exist_ok=True)
+        # persist_dir = os.path.join(get_project_root(), "vectorstore")
+        # os.makedirs(persist_dir, exist_ok=True)
         
-        self.vector_db_kwargs["persist_dir"] = persist_dir
+        # self.vector_db_kwargs["persist_dir"] = persist_dir
         self.vector_db = VectorDatabase.create(
             self.embedding_model,
-            provider=vector_db_provider,
+            vector_db_provider=vector_db_provider,
             **self.vector_db_kwargs
         )
 
@@ -195,116 +190,7 @@ class MultimodalRAGPipeline:
             # If raster is already available as base64, decode it
             return base64.b64decode(chart.raster)
         
-        # For non-raster charts (e.g., vega-lite), we need to render them
-        # This would require a secure execution environment
-        # For now, we return None
         return None
-
-    # def analyze_chart(
-    #     self, 
-    #     chart: ChartExecutorResponse, 
-    #     query: str = "Analyze this chart and provide insights", 
-    #     k: int = 3
-    # ) -> str:
-    #     """Analyze a chart using multimodal RAG
-
-    #     Args:
-    #         chart (ChartExecutorResponse): Chart to analyze
-    #         query (str, optional): User query. Defaults to "Analyze this chart and provide insights".
-    #         k (int, optional): Number of documents to retrieve. Defaults to 3.
-
-    #     Returns:
-    #         str: Analysis results
-    #     """
-    #     # Extract chart image
-    #     image_bytes = self._extract_chart_image(chart)
-    #     if not image_bytes:
-    #         return "Unable to extract chart image for analysis"
-
-    #     # Convert image to base64 for the multimodal LLM
-    #     image_b64 = self._image_to_base64(image_bytes)
-        
-    #     # Define prompt for chart analysis
-    #     chart_analysis_prompt = PromptTemplate(
-    #         template="""
-    #         You are a SENIOR DATA ANALYST with deep expertise in visual analytics and storytelling with data and chart. Your task is to interpret the following chart accurately and provide a concise yet comprehensive analysis report.
-
-    #         You are given:
-    #         1. Chart Code:
-    #         {chart_code}
-
-    #         2. Visualization (base64-encoded):
-    #         <image_base64>{image_b64}</image_base64>
-
-    #         3. User Query:
-    #         {query}
-
-    #         4. Retrieved Context (optional background information):
-    #         {context}
-
-    #         Based on the information above with the real data and chart, provide a structured analysis that includes:
-    #         1. Chart Description: 
-    #             - What does the chart show? Mention variables, labels, what the axes represent, and overall structure.
-                
-    #         2. Key Trends Identification:
-    #             - Are there any increasing or decreasing trends?
-    #             - Where are the highest and lowest points?
-    #             - Any anomalies or unexpected patterns?
-
-    #         3. Time-based Breakdown (if applicable):
-    #             - Which time periods show significant changes?
-    #             - Are there notable turning points? Link them to possible real-world events?
-                
-    #         4. Contextual Insights: (mention the specific values in the chart)
-    #             - Use actual data points shown in the chart.
-    #             - Explain what these values indicate and why they are important.
-    #             - What is the crucial information from the specific values in the chart? (taking the real values from the provided dataset to analyze the chart specificially)
-    #             - What meaningful insights can be derived by combining the chart with the provided context?
-    #             - What are the most surprising or critical insights the chart reveals?
-    #             - Is there any hidden insight from the chart? Does it reveal any important information?
-                
-                
-    #         5. External Influences: 
-    #             - Are there global or external factors that may have influenced the data or its trends?
-    #             - Explaining the potetial situations might affect the results.
-                
-    #         6. Recommendations: 
-    #             - Suggest practical and data-driven actions or decisions based on your analysis.
-    #             - Recommendations should be clear and useful even for a non-technical stakeholder.
-                
-    #         Conclusion:
-    #             - Summarize the report analysis for the user to read in bullet points.
-
-    #         **Note:**  Do not mention anything about inability to see or render the image.
-
-    #         Present your analysis for the non-specialists to understand in the clear format (e.g. write the analysis in bullet points,...)
-            
-    #         Analysis:
-    #         """,
-    #         input_variables=["chart_code", "image_b64", "query", "context"],
-    #     )
-        
-        
-    #     # Get relevant documents first (outside the chain)
-    #     relevant_docs = self.retriever.invoke(query)
-        
-    #     # Format the context as a string
-    #     context_str = "\n\n".join([doc.page_content for doc in relevant_docs])
-        
-    #     # Set up the RAG chain with pre-fetched context
-    #     rag_chain = (
-    #         {
-    #             "context": lambda _: context_str,
-    #             "chart_code": lambda _: chart.code,
-    #             "image_b64": lambda _: image_b64,
-    #             "query": lambda _: query,
-    #         }
-    #         | chart_analysis_prompt
-    #         | self.llm
-    #         | StrOutputParser()
-    #     )
-    #     # Execute the chain
-    #     return rag_chain.invoke({})
     
 
     def analyze_chart(
@@ -326,6 +212,7 @@ class MultimodalRAGPipeline:
 
         # Get relevant documents for context
         relevant_docs = self.retriever.invoke(query)
+
         context_str = "\n\n".join([doc.page_content for doc in relevant_docs])
 
         # Build multimodal message for Gemini
@@ -340,6 +227,7 @@ class MultimodalRAGPipeline:
                 "type": "text",
                 "text": f"""
                 You are a SENIOR DATA ANALYST with deep expertise in visual analytics and storytelling with data and chart. Your task is to interpret the following chart accurately and provide a concise yet comprehensive analysis report.
+                You should answer the {query} during the analysis process.
 
                 You are given:
                 1. Chart Code:
@@ -378,7 +266,9 @@ class MultimodalRAGPipeline:
                     
                 5. External Influences: 
                     - Are there global or external factors that may have influenced the data or its trends?
-                    - Explaining the potetial situations might affect the results.
+                    - Explain potential situations or events that might have affected the results.
+                    - Based on the retrieved document(s), what information or evidence do they provide about this issue?
+
                     
                 6. Recommendations: 
                     - Suggest practical and data-driven actions or decisions based on your analysis.

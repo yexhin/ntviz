@@ -76,14 +76,14 @@ def show_home():
         st.header(" ♛:grey[NTViz: Next-Gen Data Visualization Recommendation System.]")
         st.markdown("### *Overview of NTViz:*")
         st.markdown(""" 
-                    - NTViz is a chart-generation platform powered by LLM, owned by Nhi Nguyen and Tram Phan, consisting of main modules: NTZSummry, NTZGoal, VisGenerator, and many useful features to assist the non-technical users analyzing data.
+                    - NTViz is a chart-generation platform powered by LLM, owned by Nhi Nguyen and Tram Phan, consisting of main modules: NTZSummry, NTZGoal, NTZGenerator, and many useful features to assist the non-technical users analyzing data.
                     - The system uses LLM with optimized prompts to summarize data, generate objectives, produce code, and create visualizations automatically.
                     """)
         st.markdown(""" 
                     ##### Advantages:
                     - Automatically generates hypotheses/objectives from data, supports multiple visualization grammars, and can create infographics.
                     - More efficient than existing systems, simplifying the creation of complex charts.
-                    - Introduces metrics to evaluate reliability (VER) and visualization quality (SEVQ).
+                    - Introduces metrics to evaluate visualization quality (SEVQ).
                     """)
         st.markdown(""" 
                     ##### Disadvantages:
@@ -131,23 +131,6 @@ def show_home():
         
         st.divider()
         
-        # Information on LIDA-supported platforms
-        
-        with st.expander(label="_:grey[📌 Important Notes:]_"):
-            st.markdown(""" 
-                    ##### 1. Python:
-                    LIDA requires Python version 3.10 or higher.
-                    ##### 2. Data: 
-                    Best suited for datasets with ≤ 10 columns. For larger datasets, preprocessing is necessary (select relevant columns).
-                    ##### 3. Functionality: 
-                    LIDA works with .csv or .json format datasets.
-                    ##### 4. Efficiency: 
-                    LIDA performs best with large LLMs (GPT-3.5, GPT-4). Smaller models may not follow instructions as effectively.
-                    ##### 5. Accuracy: 
-                    Error rate < 3.5% across 2200 generated charts, significantly lower than the baseline (>10%).
-                    ##### 6. Large Language Model: 
-                    LIDA leverages large language models as managers to assist users in executing its tasks.
-                """)
             
             
             
@@ -214,7 +197,7 @@ def show_home():
                     Have questions, suggestions, or need help?  
                     Our team is here to assist you! Reach out to us via the following channels:  
                     
-                    - **Email:** ntviz.support@example.com  
+                    
                     
                     #### Business Inquiries:  
                     For partnerships or collaborations, please email: business.ntviz@example.com
@@ -235,7 +218,6 @@ def show_home():
                     Our project is inspired by groundbreaking work from leading tools and research:
 
                     - **LIDA**: *A Tool for Automatic Generation of Grammar-Agnostic Visualizations and Infographics using Large Language Models* (Dibia, ACL 2023).  
-                    - **Cohere**: Providing cutting-edge NLP APIs for data-driven applications.
                     - **Gemini**: Providing cutting-edge NLP APIs for our NTViz.
                     We greatly appreciate the contributions and advancements made by these tools, enabling us to develop NTviz for a broader audience.
 
