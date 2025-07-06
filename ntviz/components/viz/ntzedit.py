@@ -1,5 +1,5 @@
 from llmx import TextGenerator, TextGenerationConfig, TextGenerationResponse
-from ..scaffold import ChartScaffold
+from ..ntzscaff import ChartScaffold
 from ntviz.datamodel import Goal, Summary
 
 

@@ -2,7 +2,7 @@
 import json
 from ntviz.utils import clean_code_snippet
 from llmx import TextGenerator, TextGenerationConfig, TextGenerationResponse
-from ..scaffold import ChartScaffold
+from ..ntzscaff import ChartScaffold
 
 
 system_prompt = """

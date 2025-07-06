@@ -13,8 +13,8 @@ import pandas as pd
 from llmx import llm, TextGenerator
 from ntviz.datamodel import Goal, Summary, TextGenerationConfig, Persona
 from ntviz.utils import read_dataframe
-from ..components.summarizer import Summarizer
-from .goal import GoalExplorer
+from .ntzsummary import Summarizer
+from .ntzgoal import GoalExplorer
 from ..components.persona import PersonaExplorer
 from ..components.executor import ChartExecutor
 from ..components.viz import VizGenerator, VizEditor, VizExplainer, VizEvaluator, VizRecommender
