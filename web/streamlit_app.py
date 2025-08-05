@@ -13,7 +13,11 @@ from st_pages import add_page_title, get_nav_from_toml
 import os
 
 credentials_dict = st.secrets["google_credential"]
-credentials = service_account.Credentials.from_service_account_info(credentials_dict)
+
+with open("/tmp/gcp_key.json", "w") as f:
+    json.dump(credentials_dict, f)
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/tmp/gcp_key.json"
+
 
 def main():
     # Load environment variables
