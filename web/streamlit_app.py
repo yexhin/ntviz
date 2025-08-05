@@ -11,7 +11,9 @@ from st_pages import add_page_title, get_nav_from_toml
 
 
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "key/gen-lang-client-0317182817-0db658957f9a.json"
+
+credentials_dict = st.secrets["google_credential"]
+credentials = service_account.Credentials.from_service_account_info(credentials_dict)
 
 def main():
     # Load environment variables
