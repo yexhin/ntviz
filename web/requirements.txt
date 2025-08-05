@@ -6,6 +6,7 @@ ydata_profiling
 dotenv
 seaborn
 st_pages
+google.generativeai
 langchain
 langchain_core
 langchain_google_genai
