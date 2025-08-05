@@ -16,7 +16,7 @@ With a user-oriented approach, we have modified and added new functions to bette
 - **Code Evaluator**: Reviews and scores based on code and visualization images.
 - **Chart Analyst**: Analyzes generated charts to extract insights and trends using a RAG-based multimodal pipeline that ingests relevant documents for context. 
 
-## 🧩Usage
+## 🧩 Usage
 To use our system from your local computer, you need to fork this repo and pull it into your pc or lap. Our tutorial is in this [notebook](notebook/tutorial.ipynb).
 **NTViz** relied on llmx-gemini and Gemini. Especially, our system depends on mostly Gemini. Therefore, we updated the original llmx into llmx-gemini to use Google API. You need to install them through:
 ```python
@@ -116,8 +116,27 @@ analysis_report = ntviz.analyze(chart=executed_viz[0], df = df, summary= summary
 ```
 
 ## 🌐 Web
-Our primary objective is to help non-technical users create meaningful visualizations with ease. To support this, we developed a user-friendly and comprehensive web interface that allows users to interact with the system directly—without needing to fork or run the code locally.
+Our primary objective is to help non-technical users create meaningful visualizations with ease. To support this, we developed a user-friendly and comprehensive web interface that allows users to interact with the system directly without needing to fork or run the code locally.
+✷ Streamlit app: [ntz-recommend.streamlit.app](https://ntz-recommend.streamlit.app/)
 
 
-## References
+## 🔖 References
+We would like to acknowledge the following outstanding works that inspired or supported this project.
+```bibtex
+@article{dibia2023lida,
+  title={LIDA: A tool for automatic generation of grammar-agnostic visualizations and infographics using large language models},
+  author={Dibia, Victor},
+  journal={arXiv preprint arXiv:2303.02927},
+  year={2023}
+}
 
+@software{victordibiallmx,
+    author = {Victor Dibia},
+    license = {MIT},
+    month =  {10},
+    title = {LLMX - An API for Chat Fine-Tuned Language Models},
+    url = {https://github.com/victordibia/llmx},
+    year = {2023}
+}
+
+```
