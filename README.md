@@ -117,6 +117,7 @@ analysis_report = ntviz.analyze(chart=executed_viz[0], df = df, summary= summary
 
 ## 🌐 Web
 Our primary objective is to help non-technical users create meaningful visualizations with ease. To support this, we developed a user-friendly and comprehensive web interface that allows users to interact with the system directly without needing to fork or run the code locally.
+
 ✷ Streamlit app: [ntz-recommend.streamlit.app](https://ntz-recommend.streamlit.app/)
 
 
