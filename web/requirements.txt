@@ -10,3 +10,4 @@ langchain
 langchain_core
 langchain_google_genai
 langchain_community
+git+https://github.com/tramphan748/llmx-gemini.git
