@@ -1,5 +1,5 @@
 # NTViz: Next-Gen Data Visualization Recommendation System
-![example](images/example_output.png)
+![example](images/cover_git.png)
 
 **NTViz** is a next-generation data visualization recommendation system designed to solve this problem. It automatically suggests the most suitable chart types based on the user's dataset and intent. Our system builds upon and extends the capabilities of the open-source library **LIDA**. 
 
@@ -23,7 +23,7 @@ To use our system from your local computer, you need to fork this repo and pull 
 pip install git+https://github.com/tramphan748/llmx-gemini.git
 ```
 
-Defining the orchestor named Manager to provide your API KEY from ![Google AI Studio](https://aistudio.google.com/apikey) and configure the text generation. 
+Defining the orchestor named Manager to provide your API KEY from [Google AI Studio](https://aistudio.google.com/apikey) and configure the text generation. 
 ```python
 from ntviz import Manager, TextGenerationConfig , llm  
 ntviz = Manager(text_gen = llm("gemini", api_key="your_api_key")) # input api key
@@ -117,4 +117,7 @@ analysis_report = ntviz.analyze(chart=executed_viz[0], df = df, summary= summary
 
 ## 🌐 Web
 Our primary objective is to help non-technical users create meaningful visualizations with ease. To support this, we developed a user-friendly and comprehensive web interface that allows users to interact with the system directly—without needing to fork or run the code locally.
+
+
+## References
 
