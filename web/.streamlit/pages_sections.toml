@@ -6,19 +6,19 @@ icon = "📊"
 [[pages]]
 path = "task.py"
 name = "NTViz Tasks"
-icon = "🟣"
+icon = "✤"
 
 
 
 [[pages]]
 name = "Overview"
 is_section = true
-icon = "📑"
+icon = "✤"
 
 [[pages]]
 path = "overview.py"
 name = "Data Report"
-icon = "🟣"
+icon = "✤"
 
 [[pages]]
 name = "Knowledge Base"
@@ -28,12 +28,12 @@ icon = "📍"
 [[pages]]
 path = "home.py"
 name = "About Us"
-icon = "🟣"
+icon = "✤"
 
 [[pages]]
 path = "API_key.py"
 name = "Instruction to get API KEY"
-icon = "🟣"
+icon = "✤"
 
 
 
