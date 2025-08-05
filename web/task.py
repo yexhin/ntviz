@@ -134,9 +134,10 @@ def initialize_ntviz_and_api(api_key, provider):
         if provider == "gemini":
             text_gen = llm("gemini", api_key = api_key)
             ntviz = Manager(text_gen=text_gen)
-            models =["gemini-1.5-flash", 
-                    "gemini-1.5-flash-8b",
-                    "gemini-1.5-pro"]
+            models =["gemini-2.5-flash",
+                     "gemini-2.0-flash",
+                     "gemini-1.5-flash", 
+                     "gemini-1.5-pro"]
                 
             config = setup_model_textgen(models=models, provider=provider)   
             # textgen_config = config
