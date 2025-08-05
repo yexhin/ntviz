@@ -13,7 +13,7 @@ from st_pages import add_page_title, get_nav_from_toml
 
 import os
 
-credentials_dict = st.secrets["google_credential"]
+credentials_dict = dict(st.secrets["google_credential"])
 
 with open("/tmp/gcp_key.json", "w") as f:
     json.dump(credentials_dict, f)
