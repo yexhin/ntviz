@@ -1,7 +1,7 @@
 # NTViz: Next-Gen Data Visualization Recommendation System
 ![example](images/cover_git.png)
 
-**NTViz** is a next-generation data visualization recommendation system designed to solve this problem. It automatically suggests the most suitable chart types based on the user's dataset and intent. Our system builds upon and extends the capabilities of the open-source library **LIDA**. 
+**NTViz** is a next-generation data visualization recommendation system designed to solve this problem. It automatically suggests the most suitable chart types based on the user's dataset and intent. Our system builds upon and extends the capabilities of the open-source library [**LIDA**](https://github.com/microsoft/lida/tree/main/lida). 
 
 With a user-oriented approach, we have modified and added new functions to better serve and satisfy non-technical users.
 
