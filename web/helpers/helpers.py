@@ -30,7 +30,7 @@ def load_api_key():
             #### Instructions
             This system currently only supports **Gemini**.
             - Please enter your Gemini API key below.
-            - If you want to use a different provider in the future, contact the admin.
+            - If you don't know how to get the API KEY, please check our "Instruction to get API KEY" page.
         """)
 
     api_key = st.sidebar.text_input(
