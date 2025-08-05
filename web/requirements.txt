@@ -14,3 +14,4 @@ langchain_openai
 langchain_community
 git+https://github.com/tramphan748/llmx-gemini.git
 plotly
+faiss-cpu
